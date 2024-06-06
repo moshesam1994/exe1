@@ -3,20 +3,20 @@ package com.example.exe1;
 import android.widget.ImageView;
 
 public class GameObject {
-    ImageView imageView;
+    int imageResId;
     int column;
     float speed;
-    float yPosition;
+    int row;
 
-    public GameObject(ImageView imageView, int column, float speed) {
-        this.imageView = imageView;
+    GameObject(int imageResId, int column, float speed) {
+        this.imageResId = imageResId;
         this.column = column;
         this.speed = speed;
-        this.yPosition = 0; // התחלה בקודקוד המסך
+        this.row = 0;
     }
 
-    public void updatePosition() {
-        yPosition += speed;
-        imageView.setY(yPosition);
+    void updatePosition() {
+        row += speed;
     }
+
 }
