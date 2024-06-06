@@ -1,12 +1,11 @@
 package com.example.exe1;
 
-import android.util.Log;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,15 +13,16 @@ import android.content.Intent;
 import java.util.ArrayList;
 import java.util.Random;
 import android.content.SharedPreferences;
+
 public class GameActivity extends AppCompatActivity {
 
-    private ImageView car;
     private Button moveLeftButton;
     private Button moveRightButton;
     private TextView livesTextView;
     private TextView scoreTextView;
 
-    private int carPosition = 1; // 0: left, 1: center, 2: right
+    private int carRow = 5;
+    private int carColumn = 1;
     private int lives = 3;
     private int score = 0;
 
@@ -32,6 +32,8 @@ public class GameActivity extends AppCompatActivity {
 
     private ArrayList<GameObject> obstacles = new ArrayList<>();
     private ArrayList<GameObject> coins = new ArrayList<>();
+
+    private ImageView[][] gridCells;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,26 +45,33 @@ public class GameActivity extends AppCompatActivity {
         livesTextView = findViewById(R.id.livesTextView);
         scoreTextView = findViewById(R.id.scoreTextView);
 
-        car = new ImageView(this);
-        car.setImageResource(R.drawable.car);
-        RelativeLayout.LayoutParams carParams = new RelativeLayout.LayoutParams(150, 300);
-        car.setLayoutParams(carParams);
+        // Initialize gridCells
+        gridCells = new ImageView[6][3];
+        LinearLayout gridLayout = findViewById(R.id.gridLayout);
 
-        RelativeLayout layout = findViewById(R.id.gameLayout);
-        layout.addView(car);
-
-        car.post(new Runnable() {
-            @Override
-            public void run() {
-                updateCarPosition();
+        for (int row = 0; row < 6; row++) {
+            LinearLayout rowLayout = new LinearLayout(this);
+            rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0, 1));
+            rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+            for (int col = 0; col < 3; col++) {
+                ImageView cell = new ImageView(this);
+                cell.setLayoutParams(new LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                rowLayout.addView(cell);
+                gridCells[row][col] = cell;
             }
-        });
+            gridLayout.addView(rowLayout);
+        }
+
+        updateCarPosition();
 
         moveLeftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (carPosition > 0) {
-                    carPosition--;
+                if (carColumn > 0) {
+                    carColumn--;
                     updateCarPosition();
                 }
             }
@@ -71,8 +80,8 @@ public class GameActivity extends AppCompatActivity {
         moveRightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (carPosition < 2) {
-                    carPosition++;
+                if (carColumn < 2) {
+                    carColumn++;
                     updateCarPosition();
                 }
             }
@@ -82,11 +91,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void updateCarPosition() {
-        float screenWidth = getResources().getDisplayMetrics().widthPixels;
-        float carWidth = car.getWidth();
-        float positionX = (carPosition * (screenWidth / 3)) + ((screenWidth / 3 - carWidth) / 2);
-        car.setX(positionX);
-        car.setY(getResources().getDisplayMetrics().heightPixels - car.getHeight() - 50);
+        gridCells[carRow][carColumn].setImageResource(R.drawable.car);
     }
 
     private void startGame() {
@@ -95,7 +100,7 @@ public class GameActivity extends AppCompatActivity {
             public void run() {
                 if (gameRunning) {
                     playGame();
-                    handler.postDelayed(this, 30);
+                    handler.postDelayed(this, 1000);
                 }
             }
         };
@@ -103,8 +108,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void playGame() {
+        clearGrid();
         createObstaclesAndCoins();
         updateGameObjects();
+        updateCarPosition();
         checkCollisions();
         updateLives();
         updateScore();
@@ -114,96 +121,60 @@ public class GameActivity extends AppCompatActivity {
         Random random = new Random();
 
         if (obstacles.size() + coins.size() < 5) {
-            if (random.nextInt(100) < 5) {
-                runOnUiThread(() -> {
-                    ImageView obstacleImageView = new ImageView(this);
-                    obstacleImageView.setImageResource(R.drawable.obstacle);
-
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
-                    obstacleImageView.setLayoutParams(params);
-
-                    RelativeLayout layout = findViewById(R.id.gameLayout);
-                    layout.addView(obstacleImageView);
-
-                    int position = random.nextInt(3);
-                    float speed = 5 + random.nextInt(5);
-                    GameObject obstacle = new GameObject(obstacleImageView, position, speed);
-                    obstacles.add(obstacle);
-                    setPosition(obstacle);
-                });
+            if (random.nextInt(100) < 20) {
+                int column = random.nextInt(3);
+                float speed = 1;
+                GameObject obstacle = new GameObject(R.drawable.obstacle, column, speed);
+                obstacles.add(obstacle);
             }
 
-            if (random.nextInt(100) < 3) {
-                runOnUiThread(() -> {
-                    ImageView coinImageView = new ImageView(this);
-                    coinImageView.setImageResource(R.drawable.coin);
-
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
-                    coinImageView.setLayoutParams(params);
-
-                    RelativeLayout layout = findViewById(R.id.gameLayout);
-                    layout.addView(coinImageView);
-
-                    int position = random.nextInt(3);
-                    float speed = 5 + random.nextInt(5);
-                    GameObject coin = new GameObject(coinImageView, position, speed);
-                    coins.add(coin);
-                    setPosition(coin);
-                });
+            if (random.nextInt(100) < 10) {
+                int column = random.nextInt(3);
+                float speed = 1;
+                GameObject coin = new GameObject(R.drawable.coin, column, speed);
+                coins.add(coin);
             }
         }
-    }
-
-    private void setPosition(GameObject gameObject) {
-        runOnUiThread(() -> {
-            float screenWidth = getResources().getDisplayMetrics().widthPixels;
-            float gameObjectWidth = gameObject.imageView.getWidth();
-            float positionX = (gameObject.position * (screenWidth / 3)) + ((screenWidth / 3 - gameObjectWidth) / 2);
-            gameObject.imageView.setX(positionX);
-            gameObject.imageView.setY(0);
-
-            Log.d("GameActivity", "Object positioned at X: " + positionX + " Y: " + 0);
-        });
     }
 
     private void updateGameObjects() {
         for (GameObject obstacle : obstacles) {
             obstacle.updatePosition();
+            if (obstacle.row < 6) {
+                gridCells[obstacle.row][obstacle.column].setImageResource(obstacle.imageResId);
+            }
         }
         for (GameObject coin : coins) {
             coin.updatePosition();
+            if (coin.row < 6) {
+                gridCells[coin.row][coin.column].setImageResource(coin.imageResId);
+            }
         }
     }
 
     private void checkCollisions() {
-        float carY = car.getY();
-        float carHeight = car.getHeight();
-        float carWidth = car.getWidth();
-
         ArrayList<GameObject> objectsToRemove = new ArrayList<>();
 
         for (GameObject obstacle : obstacles) {
-            if (obstacle.position == carPosition && obstacle.imageView.getY() + obstacle.imageView.getHeight() > carY && obstacle.imageView.getY() < carY + carHeight) {
+            if (obstacle.row == carRow && obstacle.column == carColumn) {
                 lives--;
                 Toast.makeText(this, "You lost a life!", Toast.LENGTH_SHORT).show();
                 objectsToRemove.add(obstacle);
-            } else if (obstacle.imageView.getY() > getResources().getDisplayMetrics().heightPixels) {
+            } else if (obstacle.row >= 6) {
                 objectsToRemove.add(obstacle);
             }
         }
 
         for (GameObject coin : coins) {
-            if (coin.position == carPosition && coin.imageView.getY() + coin.imageView.getHeight() > carY && coin.imageView.getY() < carY + carHeight) {
+            if (coin.row == carRow && coin.column == carColumn) {
                 score++;
                 objectsToRemove.add(coin);
-            } else if (coin.imageView.getY() > getResources().getDisplayMetrics().heightPixels) {
+            } else if (coin.row >= 6) {
                 objectsToRemove.add(coin);
             }
         }
 
         for (GameObject objectToRemove : objectsToRemove) {
-            RelativeLayout layout = findViewById(R.id.gameLayout);
-            layout.removeView(objectToRemove.imageView);
             obstacles.remove(objectToRemove);
             coins.remove(objectToRemove);
         }
@@ -225,9 +196,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void updateScore() {
-
         scoreTextView.setText("Score: " + score);
-
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyGamePrefs", MODE_PRIVATE);
         int highScore = sharedPreferences.getInt("highScore", 0);
@@ -242,21 +211,34 @@ public class GameActivity extends AppCompatActivity {
     private void cleanupGame() {
         gameRunning = false;
         handler.removeCallbacks(gameRunnable);
-
-        for (GameObject obstacle : obstacles) {
-            RelativeLayout layout = findViewById(R.id.gameLayout);
-            layout.removeView(obstacle.imageView);
-        }
-
-        for (GameObject coin : coins) {
-            RelativeLayout layout = findViewById(R.id.gameLayout);
-            layout.removeView(coin.imageView);
-        }
-
+        clearGrid();
         obstacles.clear();
         coins.clear();
     }
 
+    private void clearGrid() {
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 3; col++) {
+                gridCells[row][col].setImageResource(0);
+            }
+        }
+    }
 
+    class GameObject {
+        int imageResId;
+        int column;
+        float speed;
+        int row;
 
+        GameObject(int imageResId, int column, float speed) {
+            this.imageResId = imageResId;
+            this.column = column;
+            this.speed = speed;
+            this.row = 0;
+        }
+
+        void updatePosition() {
+            row += speed;
+        }
+    }
 }

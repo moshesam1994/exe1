@@ -1,49 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gameLayout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/backgroundImage"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/road"
-        android:scaleType="fitXY"
-        android:contentDescription="Background Image" />
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/livesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lives: 3"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"/>
 
-    <Button
-        android:id="@+id/moveLeftButton"
-        android:layout_width="101dp"
-        android:layout_height="49dp"
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 0"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/upperLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/left_arrows" />
+        <LinearLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+        </LinearLayout>
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/moveRightButton"
-        android:layout_width="93dp"
-        android:layout_height="56dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/right_arrows" />
-
-    <TextView
-        android:id="@+id/livesTextView"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/lowerLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lives: 3"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
-    <TextView
-        android:id="@+id/scoreTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Score: 0"
-        android:layout_below="@id/livesTextView"
-        android:layout_centerHorizontal="true" />
+        <Button
+            android:id="@+id/moveLeftButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/left_arrows"
+            android:layout_alignParentLeft="true"/>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/moveRightButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+
+            android:background="@drawable/right_arrows"
+          
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>
