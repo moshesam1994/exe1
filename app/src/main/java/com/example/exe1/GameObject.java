@@ -3,20 +3,19 @@ package com.example.exe1;
 import android.widget.ImageView;
 
 public class GameObject {
-    int imageResId;
-    int column;
-    float speed;
-    int row;
+    public int imageResId;
+    public int column;
+    public int row;
+    public float speed;
 
-    GameObject(int imageResId, int column, float speed) {
+    public GameObject(int imageResId, int column, float speed) {
         this.imageResId = imageResId;
         this.column = column;
+        this.row = 0; // Start at the top
         this.speed = speed;
-        this.row = 0;
     }
 
-    void updatePosition() {
-        row += speed;
+    public void updatePosition() {
+        row += speed; // Move down the grid
     }
-
 }

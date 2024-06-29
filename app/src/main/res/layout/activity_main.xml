@@ -15,11 +15,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="New game"
-        android:textSize="24sp"
-
-
-
-        />
+        android:textSize="24sp"/>
 
     <Button
         android:id="@+id/highScoreButton"
@@ -29,9 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="The highest score"
-        android:textSize="20sp"
-
-        />
+        android:textSize="20sp"/>
 
     <Button
         android:id="@+id/exitButton"
@@ -41,8 +35,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:text="End"
-
-        android:textSize="20sp" />
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/textView"
@@ -57,10 +50,7 @@
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="227dp"
         android:text="Obstacles Car game"
-        android:textSize="40sp"
+        android:textSize="40sp"/>
 
-
-
-        />
 
 </RelativeLayout>

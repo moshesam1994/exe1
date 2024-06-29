@@ -7,24 +7,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.View;
+import android.widget.Toast;
+
 public class HighScoreActivity extends AppCompatActivity {
-
-
-    private TextView highScoreTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_high_score);
 
-        highScoreTextView = findViewById(R.id.highScoreTextView);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+        TopScoresFragment topScoresFragment = new TopScoresFragment();
+        ScoreLocationsFragment scoreLocationsFragment = new ScoreLocationsFragment();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("MyGamePrefs", MODE_PRIVATE);
-        int highScore = sharedPreferences.getInt("highScore", 0);
+        fragmentTransaction.add(R.id.topScoresContainer, topScoresFragment);
+        fragmentTransaction.add(R.id.scoreLocationsContainer, scoreLocationsFragment);
 
-
-        highScoreTextView.setText("High Score: " + highScore);
+        fragmentTransaction.commit();
     }
+
 }

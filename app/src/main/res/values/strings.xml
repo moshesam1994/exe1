@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">exe1</string>
+    <string-array name="modes_array">
+        <item>2 Button mode – slow and fast</item>
+        <item>1 Sensor</item>
+
+    </string-array>
+
+
+    <string-array name="sensor_modes_array">
+        <item>Without Sensor</item>
+        <item>With Sensor</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>
+
+
+
